@@ -8,6 +8,10 @@ if [[ ! "$(command -v perl)" ]]; then
   pkg install perl
 fi
 
+if (( $? != 0 )); then
+  exit -1
+fi
+
 # no need to check root
 # if [ "$(id -u)" != "0" ]
 # then
@@ -25,8 +29,8 @@ MAN_PATH="${PREFIX}/share/man"
 
 echo -e "Installing binaries.."
 
-[[ ! -e ]] && mkdir -p "${BIN_PATH}"
-[[ ! -e ]] && mkdir -p "${APP_PATH}"
+mkdir -p "$BIN_PATH"
+mkdir -p "$APP_PATH"
 
 cp "${BETTY_STYLE}.pl" "${APP_PATH}/${BETTY_STYLE}"
 cp "${BETTY_DOC}.pl" "${APP_PATH}/${BETTY_DOC}"
@@ -42,10 +46,10 @@ ln -s "${APP_PATH}/${BETTY_WRAPPER}" "${BIN_PATH}/${BETTY_WRAPPER}"
 
 echo -e "Installing man pages.."
 
-[[ ! -e ]] && mkdir -p "${MAN_PATH}"
+mkdir -p "$MAN_PATH"
 
-cp "man/betty.1" "${MAN_PATH}"
-cp "man/${BETTY_STYLE}.1" "${MAN_PATH}"
-cp "man/${BETTY_DOC}.1" "${MAN_PATH}"
+cp "man/betty.1" "$MAN_PATH"
+cp "man/${BETTY_STYLE}.1" "$MAN_PATH"
+cp "man/${BETTY_DOC}.1" "$MAN_PATH"
 
 echo -e "All set."

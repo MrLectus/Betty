@@ -21,20 +21,20 @@ errors=0
 
 echo -e "Testing coding style specs..."
 
-for dir in $tests_style_folder/*/
+for dir in "$tests_style_folder"/*/
 do
 	dir=${dir%*/}
 	echo -e "Found ${CYAN}${dir##*/}${NC} folder..."
 
-	for file in ${dir}/*.{c,h}
+	for file in "$dir"/*.{c,h}
 	do
 
-		if [ "${file}" == "${dir}/*.c" ] || [ "${file}" == "${dir}/*.h" ]
+		if [ "$file" == "${dir}/*.c" ] || [ "$file" == "${dir}/*.h" ]
 		then
 			continue
 		fi
 
-		if [[ "${file}" == *.c ]]
+		if [[ "$file" == *.c ]]
 		then
 			current_test=${file%*.c}
 		else
@@ -43,24 +43,24 @@ do
 
 		echo -e "\tTesting ${PURPLE}${current_test}${NC}..."
 
-		src="${file}"
+		src="$file"
 		expected="$current_test.expected"
 
-		if [ ! -f $expected ]
+		if [ ! -f "$expected" ]
 		then
 			echo -e "\t${RED}Missing expected output, ignored${NC}"
 			echo
 			continue
 		fi
 
-		output=$(./$style_exec $src)
-		exp=$(cat $expected)
+		output=$(./"$style_exec" "$src")
+		exp=$(cat "$expected")
 
 		if [ "$output" != "$exp" ]
 		then
 			echo -e "\t${RED}Error. The output is not the one expected:${NC}"
 			echo "$output"
-			let errors++
+            (( errors++ ))
 		else
 			echo -e "\t${GREEN}Test passed successfully!${NC}"
 		fi
@@ -77,15 +77,15 @@ echo -e "Testing documentation style specs..."
 dir=${tests_doc_folder%*/}
 echo -e "Found ${CYAN}${dir##*/}${NC} folder..."
 
-for file in ${dir}/*.{c,h}
+for file in "$dir"/*.{c,h}
 do
 
-	if [ "${file}" == "${dir}/*.c" ] || [ "${file}" == "${dir}/*.h" ]
+	if [ "$file" == "${dir}/*.c" ] || [ "$file" == "${dir}/*.h" ]
 	then
 		continue
 	fi
 
-	if [[ "${file}" == *.c ]]
+	if [[ "$file" == *.c ]]
 	then
 		current_test=${file%*.c}
 	else
@@ -94,18 +94,18 @@ do
 
 	echo -e "\tTesting ${PURPLE}${current_test}${NC}..."
 
-	src="${file}"
+	src="$file"
 	expected_stdout="$current_test.expected.stdout"
 	expected_stderr="$current_test.expected.stderr"
 
-	if [ ! -f $expected_stdout ]
+	if [ ! -f "$expected_stdout" ]
 	then
 		echo -e "\t${RED}Missing expected_stdout, ignored${NC}"
 		echo
 		continue
 	fi
 
-	if [ ! -f $expected_stderr ]
+	if [ ! -f "$expected_stderr" ]
 	then
 		echo -e "\t${RED}Missing expected_stderr, ignored${NC}"
 		echo
@@ -113,17 +113,17 @@ do
 	fi
 
 	rm -f "/tmp/stderr"
-	output=$(./$doc_exec $src 2> /tmp/stderr)
+	output=$(./"$doc_exec" "$src" 2> /tmp/stderr)
 	status=$(echo $?)
 	err=$(cat /tmp/stderr)
-	exp_stdout=$(cat $expected_stdout)
-	exp_stderr=$(cat $expected_stderr)
+	exp_stdout=$(cat "$expected_stdout")
+	exp_stderr=$(cat "$expected_stderr")
 
 	if [ "$output" != "$exp_stdout" ]
 	then
 		echo -e "\t${RED}Error. The output (stdout) is not the one expected:${NC}"
 		echo "$output"
-		let errors++
+        (( errors++ ))
 	else
 		echo -e "\t${GREEN}Test passed successfully!${NC}"
 	fi
@@ -131,7 +131,7 @@ do
 	then
 		echo -e "\t${RED}Error. The error output (stderr) is not the one expected:${NC}"
 		echo "$err"
-		let errors++
+        (( errors ))
 	else
 		echo -e "\t${GREEN}Test passed successfully!${NC}"
 	fi
@@ -141,7 +141,7 @@ do
 		if [[ $err = *[!\ ]* ]]
 		then
 			echo -e "\t${RED}Error. The error output (stderr) should be empty if the program successed:${NC}"
-			echo $err
+			echo "$err"
 			let errors++
 		else
 			echo -e "\t${GREEN}Test passed successfully!${NC}"
@@ -152,8 +152,8 @@ do
 			echo -e "\t${GREEN}Test passed successfully!${NC}"
 		else
 			echo -e "\t${RED}Error. The error output (stderr) should be empty if the program successed:${NC}"
-			echo $err
-			let errors++
+			echo "$err"
+            (( errors++ ))
 		fi
 	fi
 	echo
@@ -163,7 +163,7 @@ done
 # Count total errors  #
 # # # # # # # # # # # #
 
-if [ $errors -gt 0 ]
+if [ "$errors" -gt 0 ]
 then
 	echo -e "${RED}${errors} test(s) didn't passed...${NC}"
 	exit 1
